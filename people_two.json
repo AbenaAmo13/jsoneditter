@@ -1,0 +1,10 @@
+{
+  "Jack_information": {
+    "Name": "Jack",
+    "Email": "Jack@example.com"
+  },
+  "Bethany_information": {
+    "Name": "Bethany",
+    "Email": "Bethany@red-gate.com"
+  }
+}

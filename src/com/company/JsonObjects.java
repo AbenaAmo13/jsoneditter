@@ -38,6 +38,10 @@ public class JsonObjects {
 
     }
 
+    public static void ArrayFileStructuer(){
+
+    }
+
     //This method is to get the JSON Objects from the people.json file or similar file
     // and create an arraylist of HashMaps containing the key value pair information
     public static void createKeyValuePair(ArrayList<String> instructions) {
@@ -55,13 +59,13 @@ public class JsonObjects {
             pathOfJsonPeopleArrayFile = reader.readLine();
             JSONParser parser = new JSONParser();
             Object obj = parser.parse(new FileReader(pathOfJsonPeopleArrayFile));
+            System.out.println(obj.getClass().getName());
             //System.out.println(obj);
             JSONArray peopleJsonArray = (JSONArray) obj;
 
             JSONObject currentObject = new JSONObject();
             String keyName="";
             String valueName="";
-
             for (Object person : peopleJsonArray) {
                 currentObject = getJsonObjects((JSONObject) person);
                 Set<String> keys = currentObject.keySet();
@@ -99,62 +103,37 @@ public class JsonObjects {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println(finalKeyValuePairObjects);
+        //System.out.println(finalKeyValuePairObjects);
+        //writeJSONObjects(finalKeyValuePairObjects ,pathOfJsonPeopleArrayFile);
+        writeJSONFile(finalKeyValuePairObjects, pathOfJsonPeopleArrayFile);
 
     }
 
 
     //A helper method to get the Json Objects from the files that contain the people infomration.
     private static JSONObject getJsonObjects(JSONObject person) {
-
-
         return person;
-
-
     }
-    //This is the method that will remove all the JSON Objects in the file and replace it all with the JSON objects
-    //which are all starred by the rules given in the array.
-    public static void writeJSONObjects(ArrayList<HashMap> starredJsonObjects, String filename){
-        //This first section is to remove all the JSON objects currently in the file.
-        JSONObject parsedFileJsonObjects = new JSONObject();
-        try {
-            JSONArray fileJsonArray = (JSONArray) new JSONParser().parse(new FileReader(filename));
-
-            for (Object person : fileJsonArray) {
-                parsedFileJsonObjects = getJsonObjects((JSONObject) person);
-                Set objectKeys = parsedFileJsonObjects.keySet();
-                Iterator iterator = objectKeys.iterator();
-                while(iterator.hasNext()){
-                    String currentKey = (String) iterator.next();
-                    iterator.remove();
-                    parsedFileJsonObjects.remove(currentKey);
-                }
-
-            }
 
 
 
-            try{
-                FileWriter fileWriter = new FileWriter(filename);
-                fileWriter.write(parsedFileJsonObjects.toJSONString());
-                fileWriter.flush();
-            }catch(Exception e){
-                e.printStackTrace();
 
-
-            }
-
-
-            }catch(Exception e ){
+    public static void writeJSONFile(ArrayList<HashMap> starredJsonObjects, String filename){
+        JSONArray starredJsonArray = new JSONArray();
+        starredJsonObjects.forEach(object->{
+           starredJsonArray.add(object);
+        });
+        System.out.println(starredJsonArray);
+        //Write JSON file
+        try (FileWriter file = new FileWriter(filename)) {
+            //We can write any JSONArray or JSONObject instance to the file
+            file.write(starredJsonArray.toJSONString());
+            file.flush();
+        } catch (IOException e) {
             e.printStackTrace();
-
-
         }
-
-
-
-
     }
+
 
     //This is a method to confirm that the objects go along with the rules in the json array file.
     private static boolean rulesOnObjects(ArrayList<String> rulesInstruction, String pairKey, String pairValue) {

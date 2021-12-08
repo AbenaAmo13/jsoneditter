@@ -1,9 +1,1 @@
-[{
-	"Name": "Jack",
-	"Email": "Jack@example.com"
-},
-{
-	"Name": "Bethany",
-	"Email": "Bethany@red-gate.com"
-}
-]
+[{"Email":"Bethany@red-gate.com","Name":"*******"},{"Email":"Bethany@red-gate.com","Name":"*******"}]
