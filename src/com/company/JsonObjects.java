@@ -15,41 +15,52 @@ import java.util.regex.Pattern;
 
 public class JsonObjects {
 
-    private static ArrayList<String> getRules() {
+    private static ArrayList<String> getRules() throws IOException {
         ArrayList<String> rulesList = new ArrayList<>();
-        //Getting the rules for the files.
-        JSONParser parser = new JSONParser();
+        String pathOfJsonArrayFileInstruction = "";
+        Object obj = new Object();
+        //Get the user to input the file path of the json file that has the rules for the k or v values.
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         try {
-            //Get the user to input the file path of the json file that has the rules for the k or v values.
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            //Getting the rules for the files.
+            JSONParser parser = new JSONParser();
             System.out.println("Enter the name of the file containing the json array of strings in the format of k:<regex>\" OR \"v:<regex> ");
-            String pathOfJsonArrayFileInstruction = reader.readLine();
+            pathOfJsonArrayFileInstruction = reader.readLine();
             //Read  the json file given from the path and parse as an object named object
-            Object obj = parser.parse(new FileReader(pathOfJsonArrayFileInstruction));
+            obj = parser.parse(new FileReader(pathOfJsonArrayFileInstruction));
+            //System.out.println(obj.getClass().getName());
             JSONArray instructionJsonArray = (JSONArray) obj;
             instructionJsonArray.forEach(object -> {
                 //Place the instruction into the arraylist
                 rulesList.add((String) object);
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            if (pathOfJsonArrayFileInstruction != null) {
+                System.out.println(e.toString());
+                System.out.println("Enter the name of the file containing the json array of strings in the format of k:<regex>\" OR \"v:<regex> ");
+                pathOfJsonArrayFileInstruction = reader.readLine();
+            }
+            //If the the file does not contain a json array
+            if (!obj.getClass().getName().contains("Array")) {
+                System.out.println(e.toString());
+                System.out.println("Enter the name of the file containing the json array of strings in the format of k:<regex>\" OR \"v:<regex> ");
+                pathOfJsonArrayFileInstruction = reader.readLine();
+            }
+
         }
         return rulesList;
 
     }
 
-    public static void ArrayFileStructuer(){
-
-    }
-
     //This method is to get the JSON Objects from the people.json file or similar file
     // and create an arraylist of HashMaps containing the key value pair information
-    public static void createKeyValuePair(ArrayList<String> instructions) {
-        HashMap<String, String> jsonKeyValuePair = new HashMap<>();
+    public static void createKeyValuePair(ArrayList<String> instructions) throws IOException {
+
         //HashMap<String, String> finalJsonKeyValuePair = new HashMap<>();
-        ArrayList<HashMap> keyValuePairObjects = new ArrayList<>();
+        HashMap<String, String> jsonKeyValuePair = new HashMap<>();
         ArrayList<HashMap> finalKeyValuePairObjects = new ArrayList<>();
-        String pathOfJsonPeopleArrayFile="";
+        String pathOfJsonPeopleArrayFile = "";
+        int count = 0;
         //Get the JSON objects.
         try {
             //Get the file paths:
@@ -62,13 +73,13 @@ public class JsonObjects {
             System.out.println(obj.getClass().getName());
             //System.out.println(obj);
             JSONArray peopleJsonArray = (JSONArray) obj;
-
             JSONObject currentObject = new JSONObject();
-            String keyName="";
-            String valueName="";
+            String keyName = "";
+            String valueName = "";
             for (Object person : peopleJsonArray) {
                 currentObject = getJsonObjects((JSONObject) person);
                 Set<String> keys = currentObject.keySet();
+                System.out.println(keys.size());
                 for (String key : keys) {
                     keyName = key;
                     valueName = (String) currentObject.get(keyName);
@@ -76,37 +87,32 @@ public class JsonObjects {
                     if (rulesOnObjects(instructions, keyName, valueName)) {
                         //Star the keyName and valueName and replace the current pair with the starred version
                         String valueNameStarred = valueName.replaceAll(".", "*");
+                        HashMap<String, String> tempJsonKeyValuePair = new HashMap<>();
+                        //tempJsonKeyValuePair.put(keyName, valueNameStarred);
                         jsonKeyValuePair.put(keyName, valueNameStarred);
-                        //keyValuePairObjects.add(jsonKeyValuePair);
-                        added = true;
-                        System.out.println(valueNameStarred);
-                    }else{
+                        count = count + 1;
+                        System.out.println(count);
+                    } else {
+                        HashMap<String, String> tempJsonKeyValuePair = new HashMap<>();
+                        //tempJsonKeyValuePair.put(keyName, valueName);
                         jsonKeyValuePair.put(keyName, valueName);
+                        //jsonKeyValuePair.put(keyName, valueName);
+                        count = count + 1;
                     }
-                    /*
-                    currentObject.remove(keyName, valueName);
-                    try{
-                        FileWriter fileWriter = new FileWriter(pathOfJsonPeopleArrayFile);
-                        fileWriter.write(currentObject.toJSONString());
-                        fileWriter.flush();
-                    }catch(Exception e){
-                        e.printStackTrace();
-                    }
-                     */
                 }
-                if (added) {
+                if (count == keys.size()) {
                     finalKeyValuePairObjects.add(jsonKeyValuePair);
-                    //System.out.println(finalKeyValuePairObjects);
-                    added= false;
+                    jsonKeyValuePair = new LinkedHashMap<>();
+                    count = 0;
+                } else {
+                    System.out.println("More key value pairs to go");
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (FileNotFoundException | ParseException e) {
+            e.printStackTrace(System.out);
         }
-        //System.out.println(finalKeyValuePairObjects);
-        //writeJSONObjects(finalKeyValuePairObjects ,pathOfJsonPeopleArrayFile);
-        writeJSONFile(finalKeyValuePairObjects, pathOfJsonPeopleArrayFile);
-
+        System.out.println(finalKeyValuePairObjects);
+        //writeJSONFile(finalKeyValuePairObjects, pathOfJsonPeopleArrayFile);
     }
 
 
@@ -116,12 +122,10 @@ public class JsonObjects {
     }
 
 
-
-
-    public static void writeJSONFile(ArrayList<HashMap> starredJsonObjects, String filename){
+    public static void writeJSONFile(ArrayList<HashMap> starredJsonObjects, String filename) {
         JSONArray starredJsonArray = new JSONArray();
-        starredJsonObjects.forEach(object->{
-           starredJsonArray.add(object);
+        starredJsonObjects.forEach(object -> {
+            starredJsonArray.add(object);
         });
         System.out.println(starredJsonArray);
         //Write JSON file
