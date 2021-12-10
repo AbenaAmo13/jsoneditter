@@ -1,5 +1,6 @@
 package com.company;
 
+
 import org.json.simple.JSONArray;
 
 import org.json.simple.JSONObject;
@@ -17,6 +18,7 @@ public class JsonObjects {
     private HashMap<String, String> jsonKeyValuePair = new HashMap<>();
     private Object obj = new  Object();
     private String newFileName;
+    private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
 
 
@@ -58,7 +60,6 @@ public class JsonObjects {
 
     public ArrayList<String> setRulesList() throws IOException {
         ArrayList<String> rulesList = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         boolean completeList = false;
         do {
 
@@ -194,7 +195,7 @@ public class JsonObjects {
     //This method is to get the JSON Objects from the people.json file or similar file
     // and create an arraylist of HashMaps containing the key value pair information
     public  void createKeyValuePair() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
         //boolean fileExist = false;
         String pathOfJsonPeopleArrayFile = "";
         File dataJsonFile = new File("");
@@ -214,7 +215,17 @@ public class JsonObjects {
                         if (createKeyValuePairArray()) {
                             finishedExecuting = true;
                         }
-                        System.out.println( "New file namely "+ newFileName +" produces" + getFinalKeyValuePairObjects());
+                        JSONArray finalJsonObject = new JSONArray();
+                        for(Object jsonObject : getFinalKeyValuePairObjects()){
+                            finalJsonObject.add(jsonObject);
+
+                        }
+                        /*
+                        ObjectMapper mapper = new ObjectMapper();
+                        String json = mapper.writeValueAsString(finalJsonObject);
+                         */
+
+                        System.out.println( "New file namely "+ newFileName +" produces" + finalJsonObject);
                     }
                    /*
                     else if (obj.getClass().getName().contains("Object")){
@@ -233,6 +244,7 @@ public class JsonObjects {
 
             } while (!finishedExecuting);
         } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
@@ -246,7 +258,6 @@ public class JsonObjects {
 
     public  boolean writeJSONFile(ArrayList<HashMap> starredJsonObjects, String filename) throws IOException {
         File updatedFile = new File("");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         boolean isFileUnique = false;
         do {
@@ -328,7 +339,9 @@ public class JsonObjects {
 
 
 
+
     public static void main(String[] args) throws IOException {
+
 
     }
 
