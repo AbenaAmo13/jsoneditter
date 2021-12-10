@@ -235,7 +235,6 @@ public class JsonObjects {
                         if(createKeyValuePairObject()){
                             finishedExecuting = true;
                         }
-
                     }
                      else {
                     */

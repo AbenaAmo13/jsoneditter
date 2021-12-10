@@ -7,7 +7,6 @@ public class Main {
 
         // write your code here
         try {
-
             JsonObjects jsonObject = new JsonObjects();
             jsonObject.createKeyValuePair();
         } catch (Exception e) {
