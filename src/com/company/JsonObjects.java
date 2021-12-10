@@ -16,6 +16,18 @@ public class JsonObjects {
     private ArrayList<HashMap> finalKeyValuePairObjects = new ArrayList<>();
     private HashMap<String, String> jsonKeyValuePair = new HashMap<>();
     private Object obj = new  Object();
+    private String newFileName;
+
+
+
+
+    public String getNewFile(String newFileName) {
+        return newFileName;
+    }
+
+    public void setUpdatedFile(String newFileName) {
+        this.newFileName = newFileName;
+    }
 
     public Object getObj() {
         return obj;
@@ -46,12 +58,13 @@ public class JsonObjects {
 
     public ArrayList<String> setRulesList() throws IOException {
         ArrayList<String> rulesList = new ArrayList<>();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         boolean completeList = false;
         do {
+
             String pathOfJsonArrayFileInstruction = "";
             File dataJsonFile = new File("");
             //Get the user to input the file path of the json file that has the rules for the k or v values.
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             try {
                 //Getting the rules for the files.
                 JSONParser parser = new JSONParser();
@@ -73,10 +86,12 @@ public class JsonObjects {
                 }else{
                     System.out.println("The directory " + pathOfJsonArrayFileInstruction + " doesn't exist.");
                 }
+
             } catch (Exception e) {
                 e.toString();
             }
         } while (!completeList);
+
         return rulesList;
     }
 
@@ -135,18 +150,18 @@ public class JsonObjects {
         int count = 0;
         boolean writtenFile = false;
         JSONArray peopleJsonArray = (JSONArray) obj;
-        System.out.println(peopleJsonArray);
+        //System.out.println(peopleJsonArray);
         JSONObject currentObject = new JSONObject();
         String keyName = "";
         String valueName = "";
         for (Object person : peopleJsonArray) {
             currentObject = getJsonObjects((JSONObject) person);
             Set<String> keys = currentObject.keySet();
-            System.out.println(keys.size());
+            //System.out.println(keys.size());
             for (String key : keys) {
                 keyName = key;
                 valueName = (String) currentObject.get(keyName);
-                System.out.println("Key is: " + keyName + " value is : " + valueName);
+                // System.out.println("Key is: " + keyName + " value is : " + valueName);
                 if (rulesOnObjects(rulesList, keyName, valueName)) {
                     //Star the keyName and valueName and replace the current pair with the starred version
                     String valueNameStarred = valueName.replaceAll(".", "*");
@@ -155,12 +170,12 @@ public class JsonObjects {
                     jsonKeyValuePair.put(keyName, valueNameStarred);
                     //setJsonKeyValuePair();
                     count = count + 1;
-                    System.out.println(jsonKeyValuePair);
-                    System.out.println(count);
+                    //System.out.println(jsonKeyValuePair);
+                    //System.out.println(count);
                 } else {
                     jsonKeyValuePair.put(keyName, valueName);
                     count = count + 1;
-                    System.out.println(jsonKeyValuePair);
+                    //System.out.println(jsonKeyValuePair);
                 }
             }
             if (count == keys.size()) {
@@ -199,7 +214,7 @@ public class JsonObjects {
                         if (createKeyValuePairArray()) {
                             finishedExecuting = true;
                         }
-                        System.out.println("The final pairs are: " + getFinalKeyValuePairObjects());
+                        System.out.println( "New file namely "+ newFileName +" produces" + getFinalKeyValuePairObjects());
                     }
                    /*
                     else if (obj.getClass().getName().contains("Object")){
@@ -215,21 +230,28 @@ public class JsonObjects {
                         finishedExecuting = true;
                     }
                 }
+
             } while (!finishedExecuting);
         } catch (Exception e) {
         }
+
     }
+
+
+
     //A helper method to get the Json Objects from the files that contain the people infomration.
     public  JSONObject getJsonObjects(JSONObject person) {
         return person;
     }
+
     public  boolean writeJSONFile(ArrayList<HashMap> starredJsonObjects, String filename) throws IOException {
         File updatedFile = new File("");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
         boolean isFileUnique = false;
         do {
             System.out.println("Enter the name of the new file that will contain the updated json data file:");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            String newFileName = reader.readLine();
+            newFileName = reader.readLine();
             int count = 1;
             updatedFile = new File(newFileName);
 
@@ -246,16 +268,23 @@ public class JsonObjects {
         starredJsonObjects.forEach(object -> {
             starredJsonArray.add(object);
         });
-        System.out.println(starredJsonArray);
+
+        //System.out.println(starredJsonArray);
         //Write JSON file
         try (FileWriter file = new FileWriter(updatedFile)) {
             //We can write any JSONArray or JSONObject instance to the file
             file.write(starredJsonArray.toJSONString());
+
             file.flush();
             doneWriting = true;
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
+
+
         return doneWriting;
     }
 
@@ -269,7 +298,7 @@ public class JsonObjects {
         for (String instructions : rulesInstruction) {
             int BeforeColonIndex = instructions.indexOf(":") - 1;
             String instructionsLetter = Character.toString(instructions.charAt(BeforeColonIndex));
-            System.out.println(instructionsLetter);
+            //System.out.println(instructionsLetter);
 
             switch (instructionsLetter) {
                 case "k":
@@ -283,22 +312,26 @@ public class JsonObjects {
                     Matcher matcher = pattern.matcher(pairValue);
                     matchFound = matcher.find();
                     if (matchFound) {
-                        System.out.println(matcher.group());
+                        //System.out.println(matcher.group());
                     }
             }
         }
-        System.out.println(k_Value);
-        System.out.println(v_Value);
+        //System.out.println(k_Value);
+        //System.out.println(v_Value);
         if (k_Value.equalsIgnoreCase(pairKey) || matchFound) {
             followsRules = true;
         }
-        System.out.println(followsRules);
+        //System.out.println(followsRules);
 
         return followsRules;
     }
+
+
+
     public static void main(String[] args) throws IOException {
 
     }
+
 
 
 
