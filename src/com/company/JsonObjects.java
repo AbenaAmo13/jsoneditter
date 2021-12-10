@@ -70,20 +70,63 @@ public class JsonObjects {
                             completeList = true;
                         }
                     }
-
                 }else{
                     System.out.println("The directory " + pathOfJsonArrayFileInstruction + " doesn't exist.");
-
                 }
-
             } catch (Exception e) {
                 e.toString();
-
-
             }
         } while (!completeList);
         return rulesList;
     }
+
+/*
+    public  boolean createKeyValuePairObject() throws IOException {
+        HashMap<String, String> jsonKeyValuePair = getJsonKeyValuePair();
+        ArrayList<HashMap> finalKeyValuePairObjects = getFinalKeyValuePairObjects();
+        String pathOfJsonPeopleArrayFile = "";
+        int count = 0;
+        boolean writtenFile = false;
+        JSONObject peopleJSONObject = (JSONObject) obj;
+        JSONObject currentObject;
+        String keyName = "";
+        String valueName = "";
+        for (int i =0; i< peopleJSONObject.size(); i++) {
+            currentObject = (JSONObject) peopleJSONObject.get(i);
+            Set<String> keys = currentObject.keySet();
+                    keySet();
+            currentObject.k
+            System.out.println(keys.size());
+            for (String key : keys) {
+                keyName = key;
+                valueName = (String) currentObject.get(keyName);
+                System.out.println("Key is: " + keyName + " value is : " + valueName);
+                if (rulesOnObjects(rulesList, keyName, valueName)) {
+                    //Star the keyName and valueName and replace the current pair with the starred version
+                    String valueNameStarred = valueName.replaceAll(".", "*");
+                    HashMap<String, String> tempJsonKeyValuePair = new HashMap<>();
+                    jsonKeyValuePair.put(keyName, valueNameStarred);
+                } else {
+                    jsonKeyValuePair.put(keyName, valueName);
+                }
+                count = count + 1;
+            }
+            if (count == keys.size()) {
+                finalKeyValuePairObjects.add(jsonKeyValuePair);
+                jsonKeyValuePair = new LinkedHashMap<>();
+                count = 0;
+            } else {
+                System.out.println("More key value pairs to go");
+            }
+        }
+        if (writeJSONFile(finalKeyValuePairObjects, pathOfJsonPeopleArrayFile)) {
+            writtenFile = true;
+        }
+        return writtenFile;
+    }
+
+ */
+
 
     public  boolean createKeyValuePairArray() throws IOException {
         HashMap<String, String> jsonKeyValuePair = getJsonKeyValuePair();
@@ -152,14 +195,24 @@ public class JsonObjects {
                 } else {
                     JSONParser parser = new JSONParser();
                      obj = parser.parse(new FileReader(dataJsonFile));
-
                     if (obj.getClass().getName().contains("Array")) {
                         if (createKeyValuePairArray()) {
                             finishedExecuting = true;
                         }
                         System.out.println("The final pairs are: " + getFinalKeyValuePairObjects());
-                    } else {
+                    }
+                   /*
+                    else if (obj.getClass().getName().contains("Object")){
+                        if(createKeyValuePairObject()){
+                            finishedExecuting = true;
+                        }
+
+                    }
+                     else {
+                    */
+                    else{
                         System.out.println("Not an array");
+                        finishedExecuting = true;
                     }
                 }
             } while (!finishedExecuting);
