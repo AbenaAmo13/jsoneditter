@@ -1,5 +1,6 @@
 package com.company;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.json.simple.JSONArray;
 
@@ -224,8 +225,10 @@ public class JsonObjects {
                         ObjectMapper mapper = new ObjectMapper();
                         String json = mapper.writeValueAsString(finalJsonObject);
                          */
-
-                        System.out.println( "New file namely "+ newFileName +" produces" + finalJsonObject);
+                        Gson gson = new GsonBuilder()
+                                .setPrettyPrinting()
+                                .create();
+                        System.out.println( "New file namely "+ newFileName +" produces: \n" + gson.toJson(finalJsonObject));
                     }
                    /*
                     else if (obj.getClass().getName().contains("Object")){
